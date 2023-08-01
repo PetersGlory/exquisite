@@ -1,0 +1,14 @@
+ORDER PACKAGE (status code is either 400,200,422)
+
+{
+  error: true or false,
+  message: 'Order Completed successfully.'
+}
+
+
+RESEND OTP (Status code is either 400,200)
+
+{
+  error: true or false,
+  message: 'A verification code has been sent to email.'
+}
