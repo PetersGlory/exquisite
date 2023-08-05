@@ -15,6 +15,7 @@ adminRoutes.get('/total-amount', authenticateToken, generalController.totalamoun
 adminRoutes.post('/courier/approve', authenticateToken, generalController.approvecourier);
 adminRoutes.post('/order-by-id', authenticateToken, generalController.orderhistorybyid);
 adminRoutes.post('/order/assign', authenticateToken, generalController.assigndriver);
+adminRoutes.post('/order/decline', authenticateToken, generalController.declineorder);
 adminRoutes.post('/order/reject', authenticateToken, generalController.declineorder);
 
 module.exports = adminRoutes;

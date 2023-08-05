@@ -61,7 +61,7 @@ exports.neworder = (req, res) =>{
 exports.orderhistorybyid = (req, res) =>{
     const email = req.email;
     const{tracking_id} = req.body;
-    db.query(`SELECT * FROM packages WHERE AND tracking_id='${tracking_id}'`, (err, result)=>{
+    db.query(`SELECT * FROM packages WHERE tracking_id='${tracking_id}'`, (err, result)=>{
         if (err) {
             return res.status(400).json({
                 error: true,
