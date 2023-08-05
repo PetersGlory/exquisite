@@ -32,10 +32,10 @@ exports.driverprofile = (req, res)=>{
 
 exports.updateprofile = (req, res)=>{
     const email = req.email;
-    const {firstname, lastname,gender, emergency_contact} = req.body;
+    const {firstname, lastname,gender, emergency_contact, user_img} = req.body;
     let fullname = firstname + ' ' + lastname;
 
-    db.query(`UPDATE drivers SET fullname=?, gender=?, emergency_contact=? WHERE email=?`, [fullname, gender, emergency_contact, email], (err, result)=>{
+    db.query(`UPDATE drivers SET fullname=?, gender=?, emergency_contact=?, user_img=? WHERE email=?`, [fullname, gender, emergency_contact,user_img, email], (err, result)=>{
         if(err){
             return res.status(404).json({
                 error: true,
@@ -175,3 +175,35 @@ exports.withdraw = (req, res) =>{
         })
     }
 }
+
+
+exports.gettransactions = (req, res) => {
+    const email = req.email;
+  
+    db.query(
+      `SELECT * FROM transactions WHERE email='${email}'`,
+      (err, result) => {
+        if (err) {
+          return res.status(404).json({
+            error: true,
+            message: "Unable to connect.",
+          });
+        } else {
+          if (result.length > 0) {
+            return res.status(200).json({
+              error: false,
+              message: result,
+              text: "Transaction success",
+            });
+          } else {
+            return res.status(422).json({
+              error: false,
+              message: result,
+              text: "No transaction found.",
+            });
+          }
+        }
+      }
+    );
+  };
+  

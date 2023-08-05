@@ -10,8 +10,11 @@ adminRoutes.post('/verify/code', authentication.verifyCode);
 
 adminRoutes.get('/order-history', authenticateToken, generalController.orderhistory);
 adminRoutes.get('/couriers', authenticateToken, generalController.couriers);
+adminRoutes.get('/orders', authenticateToken, generalController.neworder);
+adminRoutes.get('/total-amount', authenticateToken, generalController.totalamount);
 adminRoutes.post('/courier/approve', authenticateToken, generalController.approvecourier);
 adminRoutes.post('/order-by-id', authenticateToken, generalController.orderhistorybyid);
 adminRoutes.post('/order/assign', authenticateToken, generalController.assigndriver);
+adminRoutes.post('/order/reject', authenticateToken, generalController.declineorder);
 
 module.exports = adminRoutes;

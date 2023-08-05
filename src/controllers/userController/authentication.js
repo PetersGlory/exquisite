@@ -76,7 +76,7 @@ exports.verifyCode = (req, res) => {
                                     error: false,
                                     message: 'Verification Successful.',
                                     accessToken: tokenGenerate({email: email}),
-                                    newUser: rs2[0].fullname == '' && rs2[0].email == '' ? true : false
+                                    newUser: rs2[0].fullname == '' || rs2[0].email == '' ? true : false
                                 });
                             }else{
                                 return res.status(422).json({

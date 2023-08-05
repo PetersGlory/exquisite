@@ -18,9 +18,14 @@ exports.login = (req, res)=>{
             }else{
                 if(result.length > 0){
                     const results = await bcrypt.compare(password, result[0].password);
-                    let codeOtp = otp_code();
+                    // let codeOtp = otp_code();
                     if(results){
-                        sendOtp({email: email, otpCode:codeOtp}, res);
+                        // sendOtp({email: email, otpCode:codeOtp}, res);
+                        return res.status(200).json({
+                            error: false,
+                            message: 'You logged in Successfully.',
+                            accessToken: tokenGenerate({email: email})
+                        });
                     }else{
                         return res.status(422).json({
                             error: true,
@@ -60,8 +65,7 @@ exports.verifyCode = (req, res) => {
                                 return res.status(200).json({
                                     error: false,
                                     message: 'Verification Successful.',
-                                    accessToken: tokenGenerate({email: email}),
-                                    newUser: rs2[0].fullname == '' && rs2[0].email == '' ? true : false
+                                    accessToken: tokenGenerate({email: email})
                                 });
                             }else{
                                 return res.status(422).json({

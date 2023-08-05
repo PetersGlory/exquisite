@@ -45,4 +45,5 @@ driversRoute.get('/get-rides', authenticateToken, profileController.getorders);
 driversRoute.post('/withdraw', authenticateToken, profileController.withdraw);
 driversRoute.post('/order/accept', authenticateToken, driverIoFunctions.acceptorder);
 driversRoute.post('/order/decline', authenticateToken, driverIoFunctions.declineorder);
+driversRoute.get('/transactions', authenticateToken, profileController.gettransactions);
 module.exports = driversRoute;
