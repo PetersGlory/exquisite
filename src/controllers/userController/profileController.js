@@ -1,4 +1,5 @@
 const db = require("../../config/db");
+const pushNotification = require('../../middleware/pushNotification');
 
 // FUNCTIONS HERE
 // Current Date
@@ -392,7 +393,7 @@ exports.updateridepayment = (req, res) => {
 
   if (validateValue(tracking_id) && validateValue(payment_status)) {
     db.query(
-      `UPDATE packages SET payment_status='${payment_status}',payment_type='${payment_type}' WHERE tracking_id='${tracking_id}' AND user_email='${email}'`,
+      `UPDATE packages SET payment_status='${payment_status}',payment_type='${payment_type}' WHERE tracking_id='${tracking_id}' AND user_email='${email}'; SELECT * FROM device_tokens WHERE email='${email}' AND user_type='user'`,
       (err, result) => {
         if (err) {
           return res.status(400).json({
@@ -401,6 +402,13 @@ exports.updateridepayment = (req, res) => {
             err_msg: err.message,
           });
         } else {
+          const [r1, r2] = result;
+          let token = r2[0].token
+          let title = 'Package'
+          let body = "You've successfully placed your order"
+          let type = 'order'
+          let content = 'new_order'
+          pushNotification(token, title, body, type, content);
           return res.status(200).json({
             error: false,
             message: "Payment updated successfully.",
@@ -485,16 +493,18 @@ exports.addcard = (req, res) => {
     validateValue(expiry_date) &&
     validateValue(cvv)
   ) {
-    db.query(`SELECT * FROM cards WHERE email='${email}'`, (err, result) => {
+    db.query(`SELECT * FROM cards WHERE email='${email}';SELECT * FROM device_tokens WHERE email='${email}' AND user_type='user'`, (err, result) => {
       if (err) {
         return res.status(400).json({
           error: true,
           message: "an error occurred",
         });
       } else {
-        if (result.length > 0) {
+        const [r1, r2] = result;
+
+        if (r1.length > 0) {
           db.query(
-            `UPDATE cards SET card_type='${card_type}',name='${name}',cvv='${cvv}', card_number='${card_number}', expiry_date='${expiry_date}'`,
+            `UPDATE cards SET card_type='${card_type}',name='${name}',cvv='${cvv}', card_number='${card_number}', expiry_date='${expiry_date}' WHERE email='${email}'`,
             (err, result) => {
               if (err) {
                 return res.status(400).json({
@@ -502,6 +512,12 @@ exports.addcard = (req, res) => {
                   message: "an error occurred",
                 });
               } else {
+                let token = r2[0].token
+                let title = 'Card'
+                let body = 'Your card has been updated.'
+                let type = 'card'
+                let content = 'update_card'
+                pushNotification(token, title, body, type, content);
                 return res.status(200).json({
                   error: false,
                   message: "Card added successfully",
@@ -511,8 +527,8 @@ exports.addcard = (req, res) => {
           );
         } else {
           db.query(
-            `INSERT INTO cards(card_number, card_type, name, expiry_date,cvv)VALUES(?,?,?,?,?)`,
-            [card_number, card_type, name, expiry_date, cvv],
+            `INSERT INTO cards(card_number, card_type, name, expiry_date,cvv,email)VALUES(?,?,?,?,?,?)`,
+            [card_number, card_type, name, expiry_date, cvv,email],
             (err, result) => {
               if (err) {
                 return res.status(400).json({
@@ -520,6 +536,13 @@ exports.addcard = (req, res) => {
                   message: "an error occurred",
                 });
               } else {
+                
+                let token = r2[0].token
+                let title = 'Card'
+                let body = 'Your card has been added'
+                let type = 'card'
+                let content = 'update_card'
+                pushNotification(token, title, body, type, content);
                 return res.status(200).json({
                   error: false,
                   message: "Card added successfully",
@@ -675,10 +698,10 @@ exports.gettransactions = (req, res) => {
 
 exports.getcourier = (req, res) => {
   const email = req.email;
-  const { courier_id } = req.body;
+  const { driver_email } = req.body;
 
   db.query(
-    `SELECT * FROM drivers WHERE user_id='${courier_id}'`,
+    `SELECT * FROM drivers WHERE email='${driver_email}'`,
     (err, result) => {
       if (err) {
         return res.status(404).json({

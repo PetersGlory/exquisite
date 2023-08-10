@@ -32,6 +32,7 @@ const upload = multer({
 
 routes.post('/upload', upload.single('filetoupload'), controllers.imageUpload)
 routes.post('/resend/otp', controllers.resendotp)
-routes.post('/notifications', controllers.notification)
+routes.post('/notifications', controllers.notification);
+routes.post('/device_token', controllers.devicetokens);
 
 module.exports = routes;

@@ -33,13 +33,13 @@ exports.driverprofile = (req, res)=>{
 exports.updateprofile = (req, res)=>{
     const email = req.email;
     const {firstname, lastname,gender, emergency_contact, user_img} = req.body;
-    let fullname = firstname + ' ' + lastname;
 
-    db.query(`UPDATE drivers SET fullname=?, gender=?, emergency_contact=?, user_img=? WHERE email=?`, [fullname, gender, emergency_contact,user_img, email], (err, result)=>{
+    db.query(`UPDATE drivers SET firstname=?,lastname=?, gender=?, emergency_contact=?, user_img=? WHERE email=?`, [firstname,lastname, gender, emergency_contact,user_img, email], (err, result)=>{
         if(err){
             return res.status(404).json({
                 error: true,
-                message: 'something went wrong try again later.'
+                message: 'something went wrong try again later.',
+                err: err.message
             })
         }else{
             return res.status(200).json({
@@ -206,4 +206,3 @@ exports.gettransactions = (req, res) => {
       }
     );
   };
-  

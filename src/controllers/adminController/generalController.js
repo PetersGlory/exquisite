@@ -214,3 +214,8 @@ exports.totalamount = (req, res) =>{
         }
     })
 }
+
+exports.sendnotification = (req, res) =>{
+    const email = req.email;
+    const {} = req.body;
+}

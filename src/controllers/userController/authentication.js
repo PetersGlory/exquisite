@@ -25,16 +25,23 @@ exports.login = (req, res)=>{
     const {email, password} = req.body;
 
     if(email !== null && email !== ""){
-        db.query(`SELECT * FROM company WHERE email='${email}'`, async (err, result)=> {
+        db.query(`SELECT * FROM company WHERE email='${email}'; SELECT * FROM device_tokens WHERE email='${email}' AND user_type='user'`, async (err, result)=> {
             // console.log(result.length)
             if(err) {
                 return res.status(400).json({error: true,message: "Unable to connect, refresh. ",newUser: false})
             }else{
-                if(result.length > 0){
-                    const results = await bcrypt.compare(password, result[0].password);
+                const [r1, r2] = result;
+                if(r1.length > 0){
+                    const results = await bcrypt.compare(password, r1[0].password);
                     console.log(results)
                     let codeOtp = otp_code();
                     if(results == true){
+                        let token = r2[0].token
+                        let title = 'Sign In'
+                        let body = 'You just sign in to your Exquisite app'
+                        let type = 'user_auth'
+                        let content = 'sign_in'
+                        pushNotification(token, title, body, type, content);
                         sendOtp({email: email, otpCode:codeOtp}, res);
                     }else{
                         return res.status(422).json({
@@ -120,16 +127,23 @@ exports.userlogin = (req, res) =>{
     const {email, password} = req.body;
 
     if(email !=='' && password !== ''){
-        db.query("SELECT * FROM users WHERE email=?",[email], async (err, result) =>{
+        db.query("SELECT * FROM users WHERE email=?; SELECT * FROM device_tokens WHERE email=? AND user_type=?",[email, email, 'user'], async (err, result) =>{
             if(err){
                 return res.status(400).json({
                     error: true,
                     message: 'An error occurerd please try again'
                 })
             }else{
-                if(result.length > 0){
-                    const results = await bcrypt.compare(password, result[0].password);
+                const [r1, r2] = result;
+                if(r1.length > 0){
+                    const results = await bcrypt.compare(password, r1[0].password);
                     // console.log(results)
+                    let token = r2[0].token
+                    let title = 'Sign In'
+                    let body = 'You just sign in to your Exquisite app'
+                    let type = 'user_auth'
+                    let content = 'sign_in'
+                    pushNotification(token, title, body, type, content);
                     let codeOtp = otp_code();
                     if(results == true){
                         sendOtp({email: email, otpCode:codeOtp}, res);

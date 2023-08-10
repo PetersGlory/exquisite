@@ -96,3 +96,47 @@ exports.notification = (req, res) =>{
         }
     })
 }
+
+exports.devicetokens = (req, res) =>{
+    const email = req.email;
+    const {token, user_type} = req.body;
+
+    db.query(`SELECT * FROM device_tokens WHERE email='${email}'`,(err, result) =>{
+        if(err){
+            return res.status(400).json({
+                error: true,
+                message: "An error occurred, please reload."
+            });
+        }else{
+            if(result.length > 0){
+                db.query(`UPDATE device_tokens SET token='${token}' WHERE email='${email}' AND user_type='${user_type}'`, (err, result)=>{
+                    if(err){
+                        return res.status(400).json({
+                            error: true,
+                            message: "An error occurred, please reload."
+                        });
+                    }else{
+                        return res.status(200).json({
+                            error: false,
+                            message: "Token updated."
+                        })
+                    }
+                })
+            }else{
+                db.query(`INSERT INTO device_tokens(token, user_type,email)VALUES(?,?,?)`,[token, user_type, email], (err, result)=>{
+                    if(err){
+                        return res.status(400).json({
+                            error: true,
+                            message: "An error occurred, please reload."
+                        });
+                    }else{
+                        return res.status(200).json({
+                            error: false,
+                            message: "Token updated."
+                        })
+                    }
+                })
+            }
+        }
+    })
+}

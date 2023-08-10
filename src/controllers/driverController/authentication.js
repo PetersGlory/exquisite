@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const sendOtp = require("../../middleware/sendOtp");
 const tokenGenerate = require("../../middleware/generateToken");
 const generateId = require('../../middleware/generateId');
+const pushNotification = require('../../middleware/pushNotification');
 // const sending = require('../../middleware/sending');
 
 
@@ -25,7 +26,7 @@ exports.login = (req, res)=>{
     const {email, password} = req.body;
 
     if(email !== null && email !== ""){
-        db.query("SELECT * FROM drivers WHERE email=?",[email], async (err, result)=>{
+        db.query("SELECT * FROM drivers WHERE email=?; SELECT * FROM device_tokens WHERE email=? AND user_type=?",[email, email, 'driver'], async (err, result)=>{
             if(err){
                 return res.status(400).json({
                     error: true,
@@ -33,10 +34,18 @@ exports.login = (req, res)=>{
                     error_msg: err
                 });
             }else{
-                if(result.length > 0){
-                    const results = await bcrypt.compare(password, result[0].password);
+                
+                const [r1, r2] = result;
+                if(r1.length > 0){
+                    const results = await bcrypt.compare(password, r1[0].password);
                     let codeOtp = otp_code();
                     if(results){
+                        let token = r2[0].token
+                        let title = 'Sign In'
+                        let body = 'You just sign in to your Exquisite app'
+                        let type = 'driver_auth'
+                        let content = 'sign_in'
+                        pushNotification(token, title, body, type, content);
                         sendOtp({email: email, otpCode:codeOtp}, res);
                     }else{
                         return res.status(422).json({
@@ -137,7 +146,7 @@ exports.registration = async (req, res) =>{
                     message:'something went wrong try again later.'
                 });
             }else{
-                return res.status(404).json({
+                return res.status(200).json({
                     error: false,
                     message:'Personal Information registered.'
                 });
@@ -161,7 +170,7 @@ exports.vehicleregistration = (req, res) =>{
         validateValue(vehicle_name) && validateValue(vehicle_model) && validateValue(vehicle_year) && validateValue(vehicle_type)
         && validateValue(vehicle_color) && validateValue(plate_number) && validateValue(address) && validateValue(vehicle_img) && validateValue(license)
     ){
-        db.query(`INSERT INTO vehicles(vehicle_name, vehicle_model, vehicle_year, vehicle_color, vehicle_type, plate_number, license, driver_email) VALUES (?,?,?,?,?,?,?,?)`,[vehicle_name,vehicle_model,vehicle_year, vehicle_color,vehicle_type, plate_number, license,email], (err, result)=>{
+        db.query(`INSERT INTO vehicles(vehicle_name, vehicle_model, vehicle_year, vehicle_color, vehicle_type, plate_number, license, driver_email,car_img) VALUES (?,?,?,?,?,?,?,?,?)`,[vehicle_name,vehicle_model,vehicle_year, vehicle_color,vehicle_type, plate_number, license,email,vehicle_img], (err, result)=>{
             if(err){
                 return res.status(404).json({
                     error: true,

@@ -46,4 +46,6 @@ driversRoute.post('/withdraw', authenticateToken, profileController.withdraw);
 driversRoute.post('/order/accept', authenticateToken, driverIoFunctions.acceptorder);
 driversRoute.post('/order/decline', authenticateToken, driverIoFunctions.declineorder);
 driversRoute.get('/transactions', authenticateToken, profileController.gettransactions);
+driversRoute.post('/user/profile', authenticateToken, driverIoFunctions.getuser);
+driversRoute.post('/update/order', authenticateToken, driverIoFunctions.updateorder);
 module.exports = driversRoute;
