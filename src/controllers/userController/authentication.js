@@ -138,12 +138,14 @@ exports.userlogin = (req, res) =>{
                 if(r1.length > 0){
                     const results = await bcrypt.compare(password, r1[0].password);
                     // console.log(results)
-                    let token = r2[0].token
-                    let title = 'Sign In'
-                    let body = 'You just sign in to your Exquisite app'
-                    let type = 'user_auth'
-                    let content = 'sign_in'
-                    pushNotification(token, title, body, type, content);
+                    if(r2.length > 0){
+                        let token = r2[0].token
+                        let title = 'Sign In'
+                        let body = 'You just sign in to your Exquisite app'
+                        let type = 'user_auth'
+                        let content = 'sign_in'
+                        pushNotification(token, title, body, type, content);
+                    }
                     let codeOtp = otp_code();
                     if(results == true){
                         sendOtp({email: email, otpCode:codeOtp}, res);
@@ -176,7 +178,7 @@ exports.registration = async (req, res)=>{
     const userId = generateId();
     // console.log(salt)
     
-    if(validateValue(fullname) && validateValue(phone) && validateValue(email) && validateValue(address) && validateValue(password) && validateValue(account_type)){
+    if(validateValue(fullname) && validateValue(phone) && validateValue(email) && validateValue(address) && validateValue(password)){
         const results = await bcrypt.hash(password, 10);
         db.query(`SELECT * FROM users WHERE email='${email}'`,(err, result)=>{
             if(err){

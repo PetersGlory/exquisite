@@ -558,11 +558,10 @@ exports.addcard = (req, res) => {
 
 exports.addtransaction = (req, res) => {
   const email = req.email;
-  const { amount, tracking_id, payment_status, content } = req.body;
+  const { amount, payment_status, content } = req.body;
 
   if (
     validateValue(amount) &&
-    validateValue(tracking_id) &&
     validateValue(payment_status) &&
     validateValue(content)
   ) {
@@ -578,8 +577,8 @@ exports.addtransaction = (req, res) => {
             Number(result[0].wallet_amount) + Number(amount)
           );
           db.query(
-            "INSERT INTO transactions(`email`, `amount`, `content`, `tracking_id`, `payment_status`)VALUES(?,?,?,?,?)",
-            [email, amount, content, tracking_id, payment_status],
+            "INSERT INTO transactions(email, amount, content, transaction_id, payment_status)VALUES(?,?,?,?,?)",
+            [email, amount, content, trackingId(), payment_status],
             (err, result) => {
               if (err) {
                 return res.status(404).json({
@@ -622,8 +621,8 @@ exports.addtransaction = (req, res) => {
                     Number(result[0].wallet_amount) + Number(amount)
                   );
                   db.query(
-                    "INSERT INTO transactions(`email`, `amount`, `content`, `tracking_id`, `payment_status`)VALUES(?,?,?,?,?)",
-                    [email, amount, content, tracking_id, payment_status],
+                    "INSERT INTO transactions(`email`, `amount`, `content`, `transaction_id`, `payment_status`)VALUES(?,?,?,?,?)",
+                    [email, amount, content, trackingId(), payment_status],
                     (err, result) => {
                       if (err) {
                         return res.status(404).json({

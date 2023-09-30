@@ -40,12 +40,14 @@ exports.login = (req, res)=>{
                     const results = await bcrypt.compare(password, r1[0].password);
                     let codeOtp = otp_code();
                     if(results){
-                        let token = r2[0].token
-                        let title = 'Sign In'
-                        let body = 'You just sign in to your Exquisite app'
-                        let type = 'driver_auth'
-                        let content = 'sign_in'
-                        pushNotification(token, title, body, type, content);
+                        if(r2.length > 0){
+                            let token = r2[0].token
+                            let title = 'Sign In'
+                            let body = 'You just sign in to your Exquisite app'
+                            let type = 'driver_auth'
+                            let content = 'sign_in'
+                            pushNotification(token, title, body, type, content);
+                        }
                         sendOtp({email: email, otpCode:codeOtp}, res);
                     }else{
                         return res.status(422).json({
