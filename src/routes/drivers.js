@@ -48,4 +48,5 @@ driversRoute.post('/order/decline', authenticateToken, driverIoFunctions.decline
 driversRoute.get('/transactions', authenticateToken, profileController.gettransactions);
 driversRoute.post('/user/profile', authenticateToken, driverIoFunctions.getuser);
 driversRoute.post('/update/order', authenticateToken, driverIoFunctions.updateorder);
+driversRoute.delete('/delete', authenticateToken, profileController.deleteAccount);
 module.exports = driversRoute;

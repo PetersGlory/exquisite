@@ -31,6 +31,7 @@ usersRoute.post('/add-card', authenticateToken, profileController.addcard);
 usersRoute.post('/add-transaction', authenticateToken, profileController.addtransaction);
 usersRoute.get('/transactions', authenticateToken, profileController.gettransactions);
 usersRoute.post('/courier/profile', authenticateToken, profileController.getcourier);
+usersRoute.delete('/delete', authenticateToken, profileController.deleteAccount);
 // usersRoute.get('/all-rides', authenticateToken, rideController.getAllRide);
 
 module.exports = usersRoute;

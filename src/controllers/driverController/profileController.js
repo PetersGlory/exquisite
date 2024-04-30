@@ -206,3 +206,45 @@ exports.gettransactions = (req, res) => {
       }
     );
   };
+
+  // DELETE aCCOUNT
+
+exports.deleteAccount = (req, res) => {
+    const email = req.email;
+  
+    db.query(
+      `DELETE FROM drivers WHERE email='${email}'`,
+      (err, result) => {
+        if (err) {
+          return res.status(404).json({
+            error: true,
+            message: "Unable to connect.",
+          });
+        } else {
+          if (result.length > 0) {
+            db.query(
+              `DELETE FROM vehicles WHERE driver_email='${email}';DELETE FROM account_details WHERE email='${email}'`,
+              (err, results) => {
+                if (err) {
+                  return res.status(404).json({
+                    error: true,
+                    message: "Unable to connect.",
+                  });
+                } else {                  
+                    return res.status(200).json({
+                        error: false,
+                        message: "Profile Deleted...",
+                    });
+                }
+              }
+            );
+          } else {
+            return res.status(422).json({
+              error: true,
+              message: "Profile not found",
+            });
+          }
+        }
+      }
+    );
+  };

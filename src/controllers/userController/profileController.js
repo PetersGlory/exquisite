@@ -308,7 +308,7 @@ exports.orderpackage = (req, res) => {
     destination_lat,
     destination_lng
   ).toFixed(2);
-  let total_price = (Number(distances) * 1).toFixed(2) * 450;
+  let total_price = (Number(distances) * 1).toFixed(2) * 200;
   let delivery_charge = percentages(total_price, 5);
   if (
     validateValue(origin) &&
@@ -735,6 +735,29 @@ exports.getcourier = (req, res) => {
             message: "Profile not found",
           });
         }
+      }
+    }
+  );
+};
+
+// DELETE aCCOUNT
+
+exports.deleteAccount = (req, res) => {
+  const email = req.email;
+
+  db.query(
+    `DELETE FROM users WHERE email='${email}'`,
+    (err, result) => {
+      if (err) {
+        return res.status(404).json({
+          error: true,
+          message: "Unable to connect.",
+        });
+      } else {
+        return res.status(200).json({
+          error: false,
+          message: "Profile Deleted...",
+        });
       }
     }
   );

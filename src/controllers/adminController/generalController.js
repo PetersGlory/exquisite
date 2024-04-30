@@ -119,7 +119,7 @@ exports.couriers = (req, res) =>{
                     error: false,
                     message: couriers
                 });
-            }, 4000)
+            }, 4000);
         }
     })
 }

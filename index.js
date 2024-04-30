@@ -13,10 +13,12 @@ const chat = require('./src/middleware/chat');
 
 const app = express();
 
-// const socket_io = require('socket.io');
-// const io = socket_io();
+const socket_io = require('socket.io');
+const io = socket_io();
 
-// io.listen();
+io.listen(app.listen(PORT, ()=>{
+    console.log(`server is listening  on ${PORT}`);
+}));
 
 app.use(express.json());
 
@@ -51,45 +53,38 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, ()=>{
-    console.log(`server is listening  on ${PORT}`);
-});
+io.on("connection", onConnected);
 
-app.get("/", (req, res)=>{
-    res.json("This is working, Welcome to Exquisite 😘.");
-})
-// io.on("connection", onConnected);
+function onConnected(socket){
+    console.log(`User connected: ${socket.id}`)
 
-// function onConnected(socket){
-//     console.log(`User connected: ${socket.id}`)
-
-//     socket.on('connect',(data) =>{
-//         users[data] = socket.id;
-//         console.log(data)
-//         // connectWithDriver(data)
-//     });
+    socket.on('connect',(data) =>{
+        users[data] = socket.id;
+        console.log(data)
+        // connectWithDriver(data)
+    });
     
-//     socket.on('connecting-driver', (data)=>{
-//         console.log(data);
-//         connectWithDriver(data);
-//     });
+    socket.on('connecting-driver', (data)=>{
+        console.log(data);
+        connectWithDriver(data);
+    });
 
-//     socket.on('disconnect', ()=>{
-//         console.log(`User Disconnected: ${socket.id}`)
-//     });
+    socket.on('disconnect', ()=>{
+        console.log(`User Disconnected: ${socket.id}`)
+    });
 
-//     socket.on('order', (data)=>{
-//         console.log(data);
-//         newDriverRide(data);
+    socket.on('order', (data)=>{
+        console.log(data);
+        newDriverRide(data);
 
-//     });
+    });
 
-//     socket.on('track-Order', (data)=>{
-//         userIoFunction.trackOrder(data);
-//     });
+    socket.on('track-Order', (data)=>{
+        userIoFunction.trackOrder(data);
+    });
     
-//     socket.on('chatAI', (data)=>{
-//         chat.chatAI(data);
-//     })
-// }
+    socket.on('chatAI', (data)=>{
+        chat.chatAI(data);
+    })
+}
 
